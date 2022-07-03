@@ -1,4 +1,4 @@
-const { User } = require('../models');
+const { User, Thought } = require('../models');
 
 const userController = {
     //get all users
@@ -62,11 +62,16 @@ const userController = {
                 res.status(404).json({ message: 'No User with this id' });
                 return;
             }
-            res.json(dbUserData);
+        //     return Thought.findOneAndDelete(
+        //         { }
+        //         res.json(dbUserData);
         })
         .catch(err => res.status(400).json(err));
     }
-    //remover thoughts when user deleted
+    //remove thoughts when user deleted
 }
+
+//add a friend
+//remove a friend
 
 module.exports = userController;
