@@ -1,10 +1,8 @@
-const { ObjectId } = require('bson');
-const { Schema, model, trusted } = require('mongoose');
+const { Schema, model, Types } = require('mongoose');
 
 const ReactionSchema = new Schema ({
     reactionId: {
-        type: ObjectId,
-        //TODO: new
+        type: Schema.Types.ObjectId,
         default: () => new Types.ObjectId()
     },
     reactionBody: {
