@@ -1,4 +1,5 @@
 const { Schema, model } = require('mongoose');
+const Thought = require("./Thought");
 
 const UserSchema = new Schema({
     username: {
@@ -8,14 +9,11 @@ const UserSchema = new Schema({
         trim: true
     },
     email: {
-        type: string,
+        type: String,
         required: true,
         unique: true,
-        //TODO: properly validate per mongoose
-        validate: {
-            validator: () => Promise.resolve(false),
-            message: 'Email validation failed'
-        }
+        //TODO: properly validate email
+        match: [/.+@.+\..+/, 'Must match an email address!'],
     },
     thoughts: [
         {
@@ -41,6 +39,13 @@ const UserSchema = new Schema({
 
 UserSchema.virtual('friendCount').get(function() {
     return this.friends.length;
+});
+
+//remove thoughts when user deleted
+UserSchema.pre("findOneAndDelete", { document: false, query: true }, async function() {
+    const doc = await this.model.findOne(this.getFilter());
+    console.log(doc.username);
+    await Thought.deleteMany({ username: doc.username });
 });
 
 const User = model('User', UserSchema);

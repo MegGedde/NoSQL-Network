@@ -19,6 +19,7 @@ const userController = {
     //get a single user
     getOneUser({ params }, res) {
         User.findOne({ _id: params.id })
+        //get thoughts
         .populate({
             path: 'thoughts',
             select: '-__v'
@@ -62,16 +63,39 @@ const userController = {
                 res.status(404).json({ message: 'No User with this id' });
                 return;
             }
-        //     return Thought.findOneAndDelete(
-        //         { }
-        //         res.json(dbUserData);
+            res.json(dbUserData);
         })
         .catch(err => res.status(400).json(err));
+    },
+    //add a friend
+    addFriend({ params }, res) {
+        User.findOneAndUpdate(
+            { _id: params.userId },
+            { $push: { friends: { _id: params.friendId } } },
+            { new: true }
+        )
+        .then(dbUserData => {
+            if (!dbUserData) {
+                res.status(404).json({ message: 'No user with this id' });
+                return;
+            }
+            res.json(dbUserData);
+        })
+        .catch(err => res.json(err));
+    },
+    //remove a friend
+    removeFriend({ params }, res) {
+        console.log("remove friend", params.friendId);
+        User.findOneAndUpdate(
+            { _id: params.userId },
+            { $pull: { friends: params.friendId } },
+            { new: true }
+        )
+        .then((dbUserData) => res.json(dbUserData))
+        .catch(err => res.json(err));
     }
-    //remove thoughts when user deleted
 }
 
-//add a friend
-//remove a friend
+
 
 module.exports = userController;
